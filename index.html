@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portrait d'Époque · Playlists</title>
+<meta name="description" content="Les playlists du livre Portrait d'Époque : le Top 10 français de chaque année.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF0EC;      /* papier gris-vert, pochette usée */
+  --ink:#18202C;        /* encre bleu nuit */
+  --muted:#5A6372;
+  --vinyl:#1A1C20;      /* noir du disque */
+  --groove:#2A2D33;
+  --label:#2B4BD6;      /* étiquette bleu cobalt */
+  --label-ink:#F4F5F7;
+  --mine:#F2C230;       /* étiquette jaune : l'année arrivée par QR code */
+  --line:#C9CEC6;
+  --focus:#2B4BD6;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#14181F; --ink:#EEF0EC; --muted:#A3AAB6; --vinyl:#050608; --groove:#1E2128;
+    --label:#4F6CF0; --line:#2C323C; --focus:#F2C230;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#14181F; --ink:#EEF0EC; --muted:#A3AAB6; --vinyl:#050608; --groove:#1E2128;
+  --label:#4F6CF0; --line:#2C323C; --focus:#F2C230;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Figtree",system-ui,sans-serif; font-size:17px; line-height:1.5;
+}
+.wrap{max-width:860px; margin:0 auto; padding:40px 16px 64px}
+
+/* En-tête */
+.brand{font-family:"Bodoni Moda",Georgia,serif; font-weight:500; font-size:1.05rem; margin:0 0 28px; letter-spacing:.01em}
+h1{
+  font-family:"Bodoni Moda",Georgia,serif; font-weight:700;
+  font-size:clamp(2.6rem,9vw,4.6rem); line-height:1; margin:0 0 14px; letter-spacing:-.01em;
+}
+.lede{margin:0 0 32px; color:var(--muted); max-width:34em; font-size:1.06rem}
+
+/* Sélecteur de plateforme */
+.picker{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin:0 0 10px}
+.picker-label{font-weight:600}
+.toggle{display:inline-flex; border:2px solid var(--ink); border-radius:999px; padding:3px}
+.toggle button{
+  font:inherit; font-weight:600; font-size:1rem; color:var(--ink);
+  background:transparent; border:0; border-radius:999px; padding:10px 22px; cursor:pointer; min-height:44px;
+}
+.toggle button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.hint{margin:0 0 36px; color:var(--muted); font-size:.98rem}
+
+/* Bandeau d'arrivée par QR code */
+.arrival{
+  display:none; margin:0 0 28px; padding:14px 18px; border-left:6px solid var(--mine);
+  background:color-mix(in srgb, var(--mine) 14%, transparent);
+}
+.arrival.on{display:block}
+
+/* Les disques */
+.records{
+  list-style:none; margin:0; padding:0;
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(132px,1fr)); gap:30px 22px;
+}
+.record{
+  display:flex; flex-direction:column; align-items:center; text-decoration:none; color:inherit;
+  border-radius:16px; padding:6px 4px 10px; outline-offset:4px;
+}
+.disc{
+  position:relative; width:118px; aspect-ratio:1; border-radius:50%;
+  background:
+    radial-gradient(circle, transparent 0 31%, var(--vinyl) 31.5%),
+    repeating-radial-gradient(circle, var(--vinyl) 0 2px, var(--groove) 2.5px 3.5px);
+  box-shadow:inset 0 0 0 3px var(--groove);
+  transition:transform .5s cubic-bezier(.2,.7,.2,1);
+}
+.disc::before{ /* étiquette centrale */
+  content:""; position:absolute; inset:24%; border-radius:50%; background:var(--label);
+}
+.disc::after{ /* trou central */
+  content:""; position:absolute; left:50%; top:50%; width:9px; height:9px; margin:-4.5px 0 0 -4.5px;
+  border-radius:50%; background:var(--paper);
+}
+.year{
+  font-family:"Bodoni Moda",Georgia,serif; font-weight:700; font-size:1.7rem; line-height:1;
+  margin-top:12px; font-variant-numeric:lining-nums;
+}
+.age{color:var(--muted); font-size:.95rem; margin-top:4px}
+.record:hover .disc, .record:focus-visible .disc{transform:rotate(200deg)}
+.record:focus-visible{outline:3px solid var(--focus)}
+.record.mine .disc::before{background:var(--mine)}
+.record.mine .year{text-decoration:underline; text-decoration-thickness:3px; text-underline-offset:6px; text-decoration-color:var(--mine)}
+.record[aria-disabled="true"]{cursor:default}
+.record[aria-disabled="true"] .disc{opacity:.35}
+
+.foot{margin-top:56px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:.92rem}
+.foot p{margin:0 0 6px}
+
+@media (prefers-reduced-motion: reduce){ .disc{transition:none} .record:hover .disc,.record:focus-visible .disc{transform:none} }
+@media (max-width:420px){
+  .records{grid-template-columns:repeat(3,1fr); gap:24px 10px}
+  .disc{width:92px}
+  .year{font-size:1.4rem}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <p class="brand">Portrait d'Époque</p>
+  <h1 id="gen-title">Génération 1977</h1>
+  <p class="lede">Le Top 10 français de chaque année, de ta naissance à tes 18 ans. Une playlist par année, à écouter en entier.</p>
+
+  <div class="picker">
+    <span class="picker-label" id="picker-label">Écouter sur</span>
+    <div class="toggle" role="group" aria-labelledby="picker-label">
+      <button type="button" data-platform="spotify" aria-pressed="true">Spotify</button>
+      <button type="button" data-platform="youtube" aria-pressed="false">YouTube</button>
+    </div>
+  </div>
+  <p class="hint">Touche une année pour ouvrir sa playlist.</p>
+
+  <p class="arrival" id="arrival" role="status"></p>
+
+  <ol class="records" id="records" aria-label="Playlists par année"></ol>
+
+  <footer class="foot">
+    <p>Portrait d'Époque, Génération 1977 : Revivez vos 18 premières années.</p>
+    <p>Les playlists renvoient vers Spotify et YouTube. Aucune inscription n'est nécessaire pour YouTube.</p>
+  </footer>
+</main>
+
+<script>
+/* ============================================================
+   LIENS À COMPLÉTER
+   Colle le lien de chaque playlist entre les guillemets.
+   Une année sans lien s'affiche en grisé avec « bientôt ».
+   Pour un futur livre, ajoute un bloc "1980": { ... } plus bas.
+   ============================================================ */
+const GENERATIONS = {
+  "1977": {
+    1977: { spotify: "", youtube: "" },
+    1978: { spotify: "", youtube: "" },
+    1979: { spotify: "", youtube: "" },
+    1980: { spotify: "", youtube: "" },
+    1981: { spotify: "", youtube: "" },
+    1982: { spotify: "", youtube: "" },
+    1983: { spotify: "", youtube: "" },
+    1984: { spotify: "", youtube: "" },
+    1985: { spotify: "", youtube: "" },
+    1986: { spotify: "", youtube: "" },
+    1987: { spotify: "", youtube: "" },
+    1988: { spotify: "", youtube: "" },
+    1989: { spotify: "", youtube: "" },
+    1990: { spotify: "", youtube: "" },
+    1991: { spotify: "", youtube: "" },
+    1992: { spotify: "", youtube: "" },
+    1993: { spotify: "", youtube: "" },
+    1994: { spotify: "", youtube: "" },
+    1995: { spotify: "", youtube: "" }
+  }
+};
+/* ============================================================ */
+
+const PLATFORM_NAMES = { spotify: "Spotify", youtube: "YouTube" };
+const list = document.getElementById("records");
+const arrival = document.getElementById("arrival");
+const title = document.getElementById("gen-title");
+
+/* Adresse des QR codes : https://portrait-depoque.github.io/#1977-1984
+   (génération-année). Sans ancre, la page affiche la génération 1977. */
+const hash = decodeURIComponent(location.hash.replace("#", ""));
+const m = hash.match(/^(\d{4})-(\d{4})$/);
+let gen = m && GENERATIONS[m[1]] ? m[1] : "1977";
+const target = m && m[1] === gen ? Number(m[2]) : null;
+
+let platform = "spotify";
+try { const saved = localStorage.getItem("pe-platform"); if (saved in PLATFORM_NAMES) platform = saved; } catch (e) {}
+
+function render() {
+  title.textContent = "Génération " + gen;
+  list.innerHTML = "";
+  const years = GENERATIONS[gen];
+  Object.keys(years).forEach(y => {
+    const year = Number(y);
+    const age = year - Number(gen);
+    const url = years[y][platform];
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.className = "record" + (year === target ? " mine" : "");
+    a.id = gen + "-" + year;
+    a.innerHTML =
+      '<span class="disc" aria-hidden="true"></span>' +
+      '<span class="year">' + year + '</span>' +
+      '<span class="age">' + (age === 0 ? "Naissance" : age + (age > 1 ? " ans" : " an")) + '</span>';
+    if (url) {
+      a.href = url;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.setAttribute("aria-label", "Playlist " + year + " sur " + PLATFORM_NAMES[platform]);
+    } else {
+      a.setAttribute("aria-disabled", "true");
+      a.setAttribute("aria-label", "Playlist " + year + " sur " + PLATFORM_NAMES[platform] + ", bientôt disponible");
+    }
+    li.appendChild(a);
+    list.appendChild(li);
+  });
+  document.querySelectorAll(".toggle button").forEach(b =>
+    b.setAttribute("aria-pressed", String(b.dataset.platform === platform)));
+}
+
+document.querySelectorAll(".toggle button").forEach(b => {
+  b.addEventListener("click", () => {
+    platform = b.dataset.platform;
+    try { localStorage.setItem("pe-platform", platform); } catch (e) {}
+    render();
+  });
+});
+
+render();
+
+if (target && GENERATIONS[gen][target]) {
+  const age = target - Number(gen);
+  arrival.textContent = target === Number(gen)
+    ? "Ton année de naissance est en jaune. Touche-la pour ouvrir sa playlist."
+    : "En " + target + ", tu avais " + age + " ans. Ton année est en jaune : touche-la pour ouvrir sa playlist.";
+  arrival.classList.add("on");
+  const el = document.getElementById(gen + "-" + target);
+  if (el) {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setTimeout(() => el.scrollIntoView({ block: "center", behavior: reduce ? "auto" : "smooth" }), 150);
+  }
+}
+</script>
+</body>
+</html>
