@@ -105,10 +105,24 @@ h1{
 .record[aria-disabled="true"]{cursor:default}
 .record[aria-disabled="true"] .disc{opacity:.35}
 
+/* Le disque doré : toute la génération en une playlist */
+.all{
+  display:none; margin-top:44px; padding:32px 4px 8px; border-top:1px solid var(--line);
+  align-items:center; gap:24px; text-decoration:none; color:inherit; outline-offset:6px;
+}
+.all.on{display:flex}
+.disc.gold{flex:none}
+.disc.gold::before{background:radial-gradient(circle at 35% 30%, #FBE7A1, #D9A93A 55%, #9C7420)}
+.all-text{display:flex; flex-direction:column; gap:6px}
+.all-title{font-family:"Bodoni Moda",Georgia,serif; font-weight:700; font-size:1.7rem; line-height:1.1}
+.all-sub{color:var(--muted); font-size:.98rem}
+.all:hover .disc, .all:focus-visible .disc{transform:rotate(200deg)}
+.all:focus-visible{outline:3px solid var(--focus)}
+
 .foot{margin-top:56px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:.92rem}
 .foot p{margin:0 0 6px}
 
-@media (prefers-reduced-motion: reduce){ .disc{transition:none} .record:hover .disc,.record:focus-visible .disc{transform:none} }
+@media (prefers-reduced-motion: reduce){ .disc{transition:none} .record:hover .disc,.record:focus-visible .disc,.all:hover .disc,.all:focus-visible .disc{transform:none} }
 @media (max-width:420px){
   .records{grid-template-columns:repeat(3,1fr); gap:24px 10px}
   .disc{width:92px}
@@ -135,6 +149,14 @@ h1{
   <p class="arrival" id="arrival" role="status"></p>
 
   <ol class="records" id="records" aria-label="Playlists par année"></ol>
+
+  <a class="all" id="all" target="_blank" rel="noopener">
+    <span class="disc gold" aria-hidden="true"></span>
+    <span class="all-text">
+      <span class="all-title">Toute la génération</span>
+      <span class="all-sub" id="all-sub"></span>
+    </span>
+  </a>
 
   <footer class="foot">
     <p>Ces playlists accompagnent le livre Portrait d'Époque, Génération 1977 : Revivez vos 18 premières années.</p>
@@ -170,6 +192,10 @@ const GENERATIONS = {
     1994: { spotify: "https://open.spotify.com/playlist/5C1AOcdpF30oNja8r4SwAK", youtube: "https://www.youtube.com/playlist?list=PLXnet4koLXC0", deezer: "https://www.deezer.com/fr/playlist/15925625223" },
     1995: { spotify: "https://open.spotify.com/playlist/3ESizWJ0XpzftjAfW5pmVK", youtube: "https://www.youtube.com/playlist?list=PLAb6TH8QYG2k", deezer: "https://www.deezer.com/fr/playlist/15925635083" }
   }
+};
+/* La playlist complète de chaque génération (disque doré). */
+const ALL = {
+  "1977": { count: 190, youtube: "https://www.youtube.com/playlist?list=PLc4gPQfHRZWM", spotify: "", deezer: "" }
 };
 /* ============================================================ */
 
@@ -223,6 +249,20 @@ function render() {
   });
   document.querySelectorAll(".toggle button").forEach(b =>
     b.setAttribute("aria-pressed", String(b.dataset.platform === platform)));
+
+  const all = document.getElementById("all");
+  const entry = ALL[gen] || {};
+  const yearsList = Object.keys(years);
+  const first = yearsList[0], last = yearsList[yearsList.length - 1];
+  if (entry[platform]) {
+    all.href = entry[platform];
+    document.getElementById("all-sub").textContent = entry.count + " chansons, de " + first + " à " + last + ", en une seule playlist.";
+    all.setAttribute("aria-label", "Toute la génération : " + entry.count + " chansons de " + first + " à " + last + " sur " + PLATFORM_NAMES[platform]);
+    all.classList.add("on");
+  } else {
+    all.removeAttribute("href");
+    all.classList.remove("on");
+  }
 }
 
 document.querySelectorAll(".toggle button").forEach(b => {
