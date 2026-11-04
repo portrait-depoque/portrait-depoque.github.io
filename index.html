@@ -125,12 +125,12 @@ h1{
   <div class="picker">
     <span class="picker-label" id="picker-label">Écouter sur</span>
     <div class="toggle" role="group" aria-labelledby="picker-label">
-      <button type="button" data-platform="spotify" aria-pressed="true">Spotify</button>
+      <button type="button" data-platform="youtube" aria-pressed="true">YouTube</button>
+      <button type="button" data-platform="spotify" aria-pressed="false">Spotify</button>
       <button type="button" data-platform="deezer" aria-pressed="false">Deezer</button>
-      <button type="button" data-platform="youtube" aria-pressed="false">YouTube</button>
     </div>
   </div>
-  <p class="hint">Choisis une année pour lancer sa playlist.</p>
+  <p class="hint">Appuie sur un disque pour lancer sa playlist.</p>
 
   <p class="arrival" id="arrival" role="status"></p>
 
@@ -173,7 +173,7 @@ const GENERATIONS = {
 };
 /* ============================================================ */
 
-const PLATFORM_NAMES = { spotify: "Spotify", deezer: "Deezer", youtube: "YouTube" };
+const PLATFORM_NAMES = { youtube: "YouTube", spotify: "Spotify", deezer: "Deezer" };
 const list = document.getElementById("records");
 const arrival = document.getElementById("arrival");
 const title = document.getElementById("gen-title");
@@ -185,8 +185,14 @@ const m = hash.match(/^(\d{4})-(\d{4})$/);
 let gen = m && GENERATIONS[m[1]] ? m[1] : "1977";
 const target = m && m[1] === gen ? Number(m[2]) : null;
 
-let platform = "spotify";
-try { const saved = localStorage.getItem("pe-platform"); if (saved in PLATFORM_NAMES) platform = saved; } catch (e) {}
+/* Plateforme par défaut : la première de la liste (YouTube) qui a la playlist
+   de l'année visée (ou toutes les années), sinon la suivante. Le choix du
+   lecteur est mémorisé pour ses visites suivantes. */
+const ORDER = Object.keys(PLATFORM_NAMES);
+const covers = p => target ? Boolean(GENERATIONS[gen][target] && GENERATIONS[gen][target][p])
+                           : Object.values(GENERATIONS[gen]).every(y => y[p]);
+let platform = ORDER.find(covers) || ORDER.find(p => Object.values(GENERATIONS[gen]).some(y => y[p])) || "spotify";
+try { const saved = localStorage.getItem("pe-platform"); if (saved in PLATFORM_NAMES && covers(saved)) platform = saved; } catch (e) {}
 
 function render() {
   title.textContent = "Génération " + gen;
@@ -233,7 +239,7 @@ document.querySelectorAll(".toggle button").forEach(b => {
 document.querySelectorAll(".toggle button").forEach(b => {
   const p = b.dataset.platform;
   const has = Object.values(GENERATIONS[gen]).some(y => y[p]);
-  if (!has) { b.hidden = true; if (platform === p) platform = "spotify"; }
+  if (!has) { b.hidden = true; if (platform === p) platform = ORDER.find(covers) || "spotify"; }
 });
 
 render();
