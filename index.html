@@ -185,13 +185,12 @@ const m = hash.match(/^(\d{4})-(\d{4})$/);
 let gen = m && GENERATIONS[m[1]] ? m[1] : "1977";
 const target = m && m[1] === gen ? Number(m[2]) : null;
 
-/* YouTube est présélectionné. Le choix du lecteur est mémorisé
-   pour ses visites suivantes. */
+/* YouTube est toujours présélectionné à l'ouverture de la page. */
 const ORDER = Object.keys(PLATFORM_NAMES);
 const covers = p => target ? Boolean(GENERATIONS[gen][target] && GENERATIONS[gen][target][p])
                            : Object.values(GENERATIONS[gen]).every(y => y[p]);
 let platform = "youtube";
-try { const saved = localStorage.getItem("pe-platform"); if (saved in PLATFORM_NAMES) platform = saved; } catch (e) {}
+try { localStorage.removeItem("pe-platform"); } catch (e) {}
 
 function render() {
   title.textContent = "Génération " + gen;
@@ -229,7 +228,6 @@ function render() {
 document.querySelectorAll(".toggle button").forEach(b => {
   b.addEventListener("click", () => {
     platform = b.dataset.platform;
-    try { localStorage.setItem("pe-platform", platform); } catch (e) {}
     render();
   });
 });
