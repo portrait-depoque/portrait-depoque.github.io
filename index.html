@@ -185,14 +185,13 @@ const m = hash.match(/^(\d{4})-(\d{4})$/);
 let gen = m && GENERATIONS[m[1]] ? m[1] : "1977";
 const target = m && m[1] === gen ? Number(m[2]) : null;
 
-/* Plateforme par défaut : la première de la liste (YouTube) qui a la playlist
-   de l'année visée (ou toutes les années), sinon la suivante. Le choix du
-   lecteur est mémorisé pour ses visites suivantes. */
+/* YouTube est présélectionné. Le choix du lecteur est mémorisé
+   pour ses visites suivantes. */
 const ORDER = Object.keys(PLATFORM_NAMES);
 const covers = p => target ? Boolean(GENERATIONS[gen][target] && GENERATIONS[gen][target][p])
                            : Object.values(GENERATIONS[gen]).every(y => y[p]);
-let platform = ORDER.find(covers) || ORDER.find(p => Object.values(GENERATIONS[gen]).some(y => y[p])) || "spotify";
-try { const saved = localStorage.getItem("pe-platform"); if (saved in PLATFORM_NAMES && covers(saved)) platform = saved; } catch (e) {}
+let platform = "youtube";
+try { const saved = localStorage.getItem("pe-platform"); if (saved in PLATFORM_NAMES) platform = saved; } catch (e) {}
 
 function render() {
   title.textContent = "Génération " + gen;
