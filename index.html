@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Portrait d'Époque · Playlists</title>
-<meta name="description" content="Les playlists du livre Portrait d'Époque : le Top 10 français de chaque année.">
+<title>Playlists Génération 1977 · Portrait d'Époque</title>
+<meta name="description" content="Dix chansons populaires en France pour chaque année, de 1977 à 1995. Les playlists du livre Portrait d'Époque, Génération 1977.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
@@ -120,7 +120,7 @@ h1{
 <main class="wrap">
   <p class="brand">Portrait d'Époque</p>
   <h1 id="gen-title">Génération 1977</h1>
-  <p class="lede">Le Top 10 français de chaque année, de ta naissance à tes 18 ans. Une playlist par année, à écouter en entier.</p>
+  <p class="lede">Dix chansons populaires en France pour chaque année, de 1977 à 1995.</p>
 
   <div class="picker">
     <span class="picker-label" id="picker-label">Écouter sur</span>
@@ -130,15 +130,14 @@ h1{
       <button type="button" data-platform="youtube" aria-pressed="false">YouTube</button>
     </div>
   </div>
-  <p class="hint">Touche une année pour ouvrir sa playlist.</p>
+  <p class="hint">Choisis une année pour lancer sa playlist.</p>
 
   <p class="arrival" id="arrival" role="status"></p>
 
   <ol class="records" id="records" aria-label="Playlists par année"></ol>
 
   <footer class="foot">
-    <p>Portrait d'Époque, Génération 1977 : Revivez vos 18 premières années.</p>
-    <p>Les playlists renvoient vers Spotify, Deezer ou YouTube selon la plateforme choisie.</p>
+    <p>Ces playlists accompagnent le livre Portrait d'Époque, Génération 1977 : Revivez vos 18 premières années.</p>
   </footer>
 </main>
 
@@ -242,8 +241,8 @@ render();
 if (target && GENERATIONS[gen][target]) {
   const age = target - Number(gen);
   arrival.textContent = target === Number(gen)
-    ? "Ton année de naissance est en jaune. Touche-la pour ouvrir sa playlist."
-    : "En " + target + ", tu avais " + age + " ans. Ton année est en jaune : touche-la pour ouvrir sa playlist.";
+    ? "L'année de ta naissance. Sa playlist est en jaune, juste en dessous."
+    : "Tu avais " + age + (age > 1 ? " ans" : " an") + " en " + target + ". Ta playlist est en jaune, juste en dessous.";
   arrival.classList.add("on");
   const el = document.getElementById(gen + "-" + target);
   if (el) {
