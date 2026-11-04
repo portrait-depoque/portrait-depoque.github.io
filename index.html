@@ -53,8 +53,9 @@ h1{
 .toggle{display:inline-flex; border:2px solid var(--ink); border-radius:999px; padding:3px}
 .toggle button{
   font:inherit; font-weight:600; font-size:1rem; color:var(--ink);
-  background:transparent; border:0; border-radius:999px; padding:10px 22px; cursor:pointer; min-height:44px;
+  background:transparent; border:0; border-radius:999px; padding:10px 18px; cursor:pointer; min-height:44px;
 }
+.toggle button[hidden]{display:none}
 .toggle button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
 .hint{margin:0 0 36px; color:var(--muted); font-size:.98rem}
 
@@ -122,6 +123,7 @@ h1{
     <span class="picker-label" id="picker-label">Écouter sur</span>
     <div class="toggle" role="group" aria-labelledby="picker-label">
       <button type="button" data-platform="spotify" aria-pressed="true">Spotify</button>
+      <button type="button" data-platform="deezer" aria-pressed="false">Deezer</button>
       <button type="button" data-platform="youtube" aria-pressed="false">YouTube</button>
     </div>
   </div>
@@ -133,7 +135,7 @@ h1{
 
   <footer class="foot">
     <p>Portrait d'Époque, Génération 1977 : Revivez vos 18 premières années.</p>
-    <p>Les playlists renvoient vers Spotify et YouTube. Aucune inscription n'est nécessaire pour YouTube.</p>
+    <p>Les playlists renvoient vers Spotify, Deezer ou YouTube selon la plateforme choisie.</p>
   </footer>
 </main>
 
@@ -146,30 +148,30 @@ h1{
    ============================================================ */
 const GENERATIONS = {
   "1977": {
-    1977: { spotify: "https://open.spotify.com/playlist/6J94NB31fDShla4kzWkSH4", youtube: "" },
-    1978: { spotify: "https://open.spotify.com/playlist/3qonUtqrCzZMRdQ2pGoEua", youtube: "" },
-    1979: { spotify: "https://open.spotify.com/playlist/4wMcEW8YEjkui283zhG64m", youtube: "" },
-    1980: { spotify: "https://open.spotify.com/playlist/5dvPkxzpSe97sgF0exOhvc", youtube: "" },
-    1981: { spotify: "https://open.spotify.com/playlist/6WbS7tgGvHsDdCJyNeoHCA", youtube: "" },
-    1982: { spotify: "https://open.spotify.com/playlist/4lVrZILpDblIaFmMdrhxFp", youtube: "" },
-    1983: { spotify: "https://open.spotify.com/playlist/7vHT0w9j67JR4YtUO4FxCH", youtube: "" },
-    1984: { spotify: "https://open.spotify.com/playlist/75yQ0RHpPYFeD5SXYAy45G", youtube: "" },
-    1985: { spotify: "https://open.spotify.com/playlist/56RjMpzhOrRp8ORMDIIKpR", youtube: "" },
-    1986: { spotify: "https://open.spotify.com/playlist/6NIPjgqWLtHGCD9T3jnX6a", youtube: "" },
-    1987: { spotify: "https://open.spotify.com/playlist/45xBcsmeuNFYdoK2jjeja1", youtube: "" },
-    1988: { spotify: "https://open.spotify.com/playlist/77JRF2J6vdYun7OkZhLdtC", youtube: "" },
-    1989: { spotify: "https://open.spotify.com/playlist/1A4hoHsLSs09WNaB5la2zR", youtube: "" },
-    1990: { spotify: "https://open.spotify.com/playlist/5ZBgl4L8cZj9tqdX6a7ehF", youtube: "" },
-    1991: { spotify: "https://open.spotify.com/playlist/1gXAQQSOVKdpB9e8Vi5UFu", youtube: "" },
-    1992: { spotify: "https://open.spotify.com/playlist/3CbBxnMKZqz46RVa1ndMfN", youtube: "" },
-    1993: { spotify: "https://open.spotify.com/playlist/1VGLZ5JlfYOMu8DTxYCqTp", youtube: "" },
-    1994: { spotify: "https://open.spotify.com/playlist/5C1AOcdpF30oNja8r4SwAK", youtube: "" },
-    1995: { spotify: "https://open.spotify.com/playlist/3ESizWJ0XpzftjAfW5pmVK", youtube: "" }
+    1977: { spotify: "https://open.spotify.com/playlist/6J94NB31fDShla4kzWkSH4", youtube: "", deezer: "https://www.deezer.com/fr/playlist/15925636143" },
+    1978: { spotify: "https://open.spotify.com/playlist/3qonUtqrCzZMRdQ2pGoEua", youtube: "", deezer: "https://www.deezer.com/fr/playlist/15925636103" },
+    1979: { spotify: "https://open.spotify.com/playlist/4wMcEW8YEjkui283zhG64m", youtube: "", deezer: "https://www.deezer.com/fr/playlist/15925636023" },
+    1980: { spotify: "https://open.spotify.com/playlist/5dvPkxzpSe97sgF0exOhvc", youtube: "", deezer: "https://www.deezer.com/fr/playlist/15925636003" },
+    1981: { spotify: "https://open.spotify.com/playlist/6WbS7tgGvHsDdCJyNeoHCA", youtube: "", deezer: "https://www.deezer.com/fr/playlist/15925635943" },
+    1982: { spotify: "https://open.spotify.com/playlist/4lVrZILpDblIaFmMdrhxFp", youtube: "", deezer: "https://www.deezer.com/fr/playlist/15925635903" },
+    1983: { spotify: "https://open.spotify.com/playlist/7vHT0w9j67JR4YtUO4FxCH", youtube: "", deezer: "https://www.deezer.com/fr/playlist/15925635863" },
+    1984: { spotify: "https://open.spotify.com/playlist/75yQ0RHpPYFeD5SXYAy45G", youtube: "", deezer: "https://www.deezer.com/fr/playlist/15925635823" },
+    1985: { spotify: "https://open.spotify.com/playlist/56RjMpzhOrRp8ORMDIIKpR", youtube: "", deezer: "https://www.deezer.com/fr/playlist/15925635763" },
+    1986: { spotify: "https://open.spotify.com/playlist/6NIPjgqWLtHGCD9T3jnX6a", youtube: "", deezer: "https://www.deezer.com/fr/playlist/15925635683" },
+    1987: { spotify: "https://open.spotify.com/playlist/45xBcsmeuNFYdoK2jjeja1", youtube: "", deezer: "https://www.deezer.com/fr/playlist/15925635663" },
+    1988: { spotify: "https://open.spotify.com/playlist/77JRF2J6vdYun7OkZhLdtC", youtube: "", deezer: "https://www.deezer.com/fr/playlist/15925635603" },
+    1989: { spotify: "https://open.spotify.com/playlist/1A4hoHsLSs09WNaB5la2zR", youtube: "", deezer: "https://www.deezer.com/fr/playlist/15925635543" },
+    1990: { spotify: "https://open.spotify.com/playlist/5ZBgl4L8cZj9tqdX6a7ehF", youtube: "", deezer: "https://www.deezer.com/fr/playlist/15925635463" },
+    1991: { spotify: "https://open.spotify.com/playlist/1gXAQQSOVKdpB9e8Vi5UFu", youtube: "", deezer: "https://www.deezer.com/fr/playlist/15925635403" },
+    1992: { spotify: "https://open.spotify.com/playlist/3CbBxnMKZqz46RVa1ndMfN", youtube: "", deezer: "https://www.deezer.com/fr/playlist/15925635383" },
+    1993: { spotify: "https://open.spotify.com/playlist/1VGLZ5JlfYOMu8DTxYCqTp", youtube: "", deezer: "https://www.deezer.com/fr/playlist/15925635343" },
+    1994: { spotify: "https://open.spotify.com/playlist/5C1AOcdpF30oNja8r4SwAK", youtube: "", deezer: "https://www.deezer.com/fr/playlist/15925625223" },
+    1995: { spotify: "https://open.spotify.com/playlist/3ESizWJ0XpzftjAfW5pmVK", youtube: "", deezer: "https://www.deezer.com/fr/playlist/15925635083" }
   }
 };
 /* ============================================================ */
 
-const PLATFORM_NAMES = { spotify: "Spotify", youtube: "YouTube" };
+const PLATFORM_NAMES = { spotify: "Spotify", deezer: "Deezer", youtube: "YouTube" };
 const list = document.getElementById("records");
 const arrival = document.getElementById("arrival");
 const title = document.getElementById("gen-title");
@@ -222,6 +224,13 @@ document.querySelectorAll(".toggle button").forEach(b => {
     try { localStorage.setItem("pe-platform", platform); } catch (e) {}
     render();
   });
+});
+
+/* Une plateforme sans aucun lien n'est pas affichée. */
+document.querySelectorAll(".toggle button").forEach(b => {
+  const p = b.dataset.platform;
+  const has = Object.values(GENERATIONS[gen]).some(y => y[p]);
+  if (!has) { b.hidden = true; if (platform === p) platform = "spotify"; }
 });
 
 render();
