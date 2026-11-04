@@ -71,6 +71,9 @@ h1{
   list-style:none; margin:0; padding:0;
   display:grid; grid-template-columns:repeat(auto-fill,minmax(132px,1fr)); gap:30px 22px;
 }
+.records[data-platform="spotify"]{--label:#1DB954}
+.records[data-platform="deezer"]{--label:#A238FF}
+.records[data-platform="youtube"]{--label:#FF0033}
 .record{
   display:flex; flex-direction:column; align-items:center; text-decoration:none; color:inherit;
   border-radius:16px; padding:6px 4px 10px; outline-offset:4px;
@@ -189,6 +192,7 @@ try { const saved = localStorage.getItem("pe-platform"); if (saved in PLATFORM_N
 function render() {
   title.textContent = "Génération " + gen;
   list.innerHTML = "";
+  list.dataset.platform = platform;
   const years = GENERATIONS[gen];
   Object.keys(years).forEach(y => {
     const year = Number(y);
