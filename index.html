@@ -107,7 +107,7 @@ h1{
 
 /* Le disque doré : toute la génération en une playlist */
 .all{
-  display:none; margin-top:44px; padding:32px 4px 8px; border-top:1px solid var(--line);
+  display:none; margin:0 0 36px; padding:0 4px 32px; border-bottom:1px solid var(--line);
   align-items:center; gap:24px; text-decoration:none; color:inherit; outline-offset:6px;
 }
 .all.on{display:flex}
@@ -127,6 +127,8 @@ h1{
   .records{grid-template-columns:repeat(3,1fr); gap:24px 10px}
   .disc{width:92px}
   .year{font-size:1.4rem}
+  .all{gap:18px}
+  .all-title{font-size:1.45rem}
 }
 </style>
 </head>
@@ -148,8 +150,6 @@ h1{
 
   <p class="arrival" id="arrival" role="status"></p>
 
-  <ol class="records" id="records" aria-label="Playlists par année"></ol>
-
   <a class="all" id="all" target="_blank" rel="noopener">
     <span class="disc gold" aria-hidden="true"></span>
     <span class="all-text">
@@ -157,6 +157,9 @@ h1{
       <span class="all-sub" id="all-sub"></span>
     </span>
   </a>
+
+  <ol class="records" id="records" aria-label="Playlists par année"></ol>
+
 
   <footer class="foot">
     <p>Ces playlists accompagnent le livre Portrait d'Époque, Génération 1977 : Revivez vos 18 premières années.</p>
