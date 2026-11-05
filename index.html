@@ -66,6 +66,29 @@ h1{
 }
 .arrival.on{display:block}
 
+/* Encadré d'arrivée par QR code : l'année du lecteur et ses 3 plateformes */
+.spot{
+  display:none; margin:0 0 40px; padding:22px 20px 20px; border-radius:18px;
+  background:color-mix(in srgb, var(--mine) 16%, var(--paper)); border:2px solid var(--mine);
+}
+.spot.on{display:block}
+.spot-kicker{margin:0 0 4px; font-weight:600; color:var(--muted); font-size:.98rem}
+.spot-year{
+  font-family:"Bodoni Moda",Georgia,serif; font-weight:700; font-size:clamp(3.2rem,14vw,4.4rem);
+  line-height:1; margin:0 0 8px; font-variant-numeric:lining-nums;
+}
+.spot-sub{margin:0 0 18px; font-size:1.06rem}
+.spot-btns{display:grid; grid-template-columns:repeat(auto-fit,minmax(96px,1fr)); gap:10px}
+.spot-btns a{
+  display:flex; align-items:center; justify-content:center; min-height:52px; padding:0 10px;
+  border-radius:999px; font-weight:600; font-size:1.02rem; text-decoration:none; color:#FFFFFF;
+}
+.spot-btns a[data-p="youtube"]{background:#FF0033}
+.spot-btns a[data-p="spotify"]{background:#1DB954; color:#0B1A10}
+.spot-btns a[data-p="deezer"]{background:#A238FF}
+.spot-btns a:focus-visible{outline:3px solid var(--focus); outline-offset:3px}
+.spot-note{margin:16px 0 0; color:var(--muted); font-size:.95rem}
+
 /* Les disques */
 .records{
   list-style:none; margin:0; padding:0;
@@ -135,6 +158,14 @@ h1{
 <body>
 <main class="wrap">
   <p class="brand">Portrait d'Époque</p>
+
+  <section class="spot" id="spot" aria-labelledby="spot-year">
+    <p class="spot-kicker" id="spot-kicker"></p>
+    <p class="spot-year" id="spot-year"></p>
+    <p class="spot-sub" id="spot-sub"></p>
+    <div class="spot-btns" id="spot-btns"></div>
+    <p class="spot-note">Toutes les autres années sont juste en dessous.</p>
+  </section>
   <h1 id="gen-title">Génération 1977</h1>
   <p class="lede">Dix chansons populaires en France pour chaque année, de 1977 à 1995.</p>
 
@@ -233,7 +264,7 @@ function render() {
     const li = document.createElement("li");
     const a = document.createElement("a");
     a.className = "record" + (year === target ? " mine" : "");
-    a.id = gen + "-" + year;
+    a.id = "disc-" + gen + "-" + year; /* pas l'ancre du QR, pour éviter que le navigateur défile */
     a.innerHTML =
       '<span class="disc" aria-hidden="true"></span>' +
       '<span class="year">' + year + '</span>' +
@@ -284,17 +315,24 @@ document.querySelectorAll(".toggle button").forEach(b => {
 
 render();
 
+/* Arrivée par QR code : encadré en haut de page, sans défilement. */
 if (target && GENERATIONS[gen][target]) {
   const age = target - Number(gen);
-  arrival.textContent = target === Number(gen)
-    ? "L'année de ta naissance. Sa playlist est en jaune, juste en dessous."
-    : "Tu avais " + age + (age > 1 ? " ans" : " an") + " en " + target + ". Ta playlist est en jaune, juste en dessous.";
-  arrival.classList.add("on");
-  const el = document.getElementById(gen + "-" + target);
-  if (el) {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    setTimeout(() => el.scrollIntoView({ block: "center", behavior: reduce ? "auto" : "smooth" }), 150);
-  }
+  const links = GENERATIONS[gen][target];
+  document.getElementById("spot-kicker").textContent =
+    age === 0 ? "L'année de ta naissance" : "Tu avais " + age + (age > 1 ? " ans" : " an");
+  document.getElementById("spot-year").textContent = target;
+  document.getElementById("spot-sub").textContent = "Les 10 chansons populaires de " + target;
+  const btns = document.getElementById("spot-btns");
+  ORDER.forEach(p => {
+    if (!links[p]) return;
+    const a = document.createElement("a");
+    a.href = links[p]; a.target = "_blank"; a.rel = "noopener"; a.dataset.p = p;
+    a.textContent = PLATFORM_NAMES[p];
+    a.setAttribute("aria-label", "Playlist " + target + " sur " + PLATFORM_NAMES[p]);
+    btns.appendChild(a);
+  });
+  document.getElementById("spot").classList.add("on");
 }
 </script>
 </body>
