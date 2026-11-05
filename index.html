@@ -75,7 +75,9 @@ h1{
 .spot-main{display:flex; align-items:center; gap:20px; margin:0 0 20px; text-decoration:none; color:inherit; border-radius:14px; outline-offset:6px}
 .spot-main:focus-visible{outline:3px solid var(--focus)}
 .spot-main .disc{flex:none; width:108px}
-.spot-main .disc::before{background:var(--mine)}
+.spot[data-platform="spotify"]{--label:#1DB954}
+.spot[data-platform="deezer"]{--label:#A238FF}
+.spot[data-platform="youtube"]{--label:#FF0033}
 .spot-main:hover .disc, .spot-main:focus-visible .disc{transform:rotate(200deg)}
 .spot-text{display:flex; flex-direction:column}
 .spot-kicker{font-weight:600; color:var(--muted); font-size:.98rem}
@@ -122,7 +124,6 @@ h1{
 .age{color:var(--muted); font-size:.95rem; margin-top:4px}
 .record:hover .disc, .record:focus-visible .disc{transform:rotate(200deg)}
 .record:focus-visible{outline:3px solid var(--focus)}
-.record.mine .disc::before{background:var(--mine)}
 .record.mine .year{text-decoration:underline; text-decoration-thickness:3px; text-underline-offset:6px; text-decoration-color:var(--mine)}
 .record[aria-disabled="true"]{cursor:default}
 .record[aria-disabled="true"] .disc{opacity:.35}
@@ -337,6 +338,7 @@ if (target && GENERATIONS[gen][target]) {
 
 function updateSpot() {
   if (!target || !GENERATIONS[gen][target]) return;
+  document.getElementById("spot").dataset.platform = platform;
   const link = document.getElementById("spot-link");
   const url = GENERATIONS[gen][target][platform];
   if (url) { link.href = url; link.setAttribute("aria-label", "Playlist " + target + " sur " + PLATFORM_NAMES[platform]); }
