@@ -72,22 +72,21 @@ h1{
   background:color-mix(in srgb, var(--mine) 16%, var(--paper)); border:2px solid var(--mine);
 }
 .spot.on{display:block}
-.spot-kicker{margin:0 0 4px; font-weight:600; color:var(--muted); font-size:.98rem}
+.spot-main{display:flex; align-items:center; gap:20px; margin:0 0 20px; text-decoration:none; color:inherit; border-radius:14px; outline-offset:6px}
+.spot-main:focus-visible{outline:3px solid var(--focus)}
+.spot-main .disc{flex:none; width:108px}
+.spot-main .disc::before{background:var(--mine)}
+.spot-main:hover .disc, .spot-main:focus-visible .disc{transform:rotate(200deg)}
+.spot-text{display:flex; flex-direction:column}
+.spot-kicker{font-weight:600; color:var(--muted); font-size:.98rem}
 .spot-year{
-  font-family:"Bodoni Moda",Georgia,serif; font-weight:700; font-size:clamp(3.2rem,14vw,4.4rem);
-  line-height:1; margin:0 0 8px; font-variant-numeric:lining-nums;
+  font-family:"Bodoni Moda",Georgia,serif; font-weight:700; font-size:3.2rem;
+  line-height:1; margin:2px 0 6px; font-variant-numeric:lining-nums;
 }
-.spot-sub{margin:0 0 18px; font-size:1.06rem}
-.spot-btns{display:grid; grid-template-columns:repeat(auto-fit,minmax(96px,1fr)); gap:10px}
-.spot-btns a{
-  display:flex; align-items:center; justify-content:center; min-height:52px; padding:0 10px;
-  border-radius:999px; font-weight:600; font-size:1.02rem; text-decoration:none; color:#FFFFFF;
-}
-.spot-btns a[data-p="youtube"]{background:#FF0033}
-.spot-btns a[data-p="spotify"]{background:#1DB954; color:#0B1A10}
-.spot-btns a[data-p="deezer"]{background:#A238FF}
-.spot-btns a:focus-visible{outline:3px solid var(--focus); outline-offset:3px}
-.spot-note{margin:16px 0 0; color:var(--muted); font-size:.95rem}
+.spot-sub{font-size:1rem; line-height:1.35}
+.spot .picker{margin:0 0 8px}
+.spot .hint{margin:0}
+.spot-note{margin:16px 0 0; padding-top:14px; border-top:1px solid color-mix(in srgb, var(--mine) 55%, transparent); color:var(--muted); font-size:.95rem}
 
 /* Les disques */
 .records{
@@ -160,10 +159,15 @@ h1{
   <p class="brand">Portrait d'Époque</p>
 
   <section class="spot" id="spot" aria-labelledby="spot-year">
-    <p class="spot-kicker" id="spot-kicker"></p>
-    <p class="spot-year" id="spot-year"></p>
-    <p class="spot-sub" id="spot-sub"></p>
-    <div class="spot-btns" id="spot-btns"></div>
+    <a class="spot-main" id="spot-link" target="_blank" rel="noopener">
+      <span class="disc" aria-hidden="true"></span>
+      <span class="spot-text">
+        <span class="spot-kicker" id="spot-kicker"></span>
+        <span class="spot-year" id="spot-year"></span>
+        <span class="spot-sub" id="spot-sub"></span>
+      </span>
+    </a>
+    <div id="spot-slot"></div>
     <p class="spot-note">Toutes les autres années sont juste en dessous.</p>
   </section>
   <h1 id="gen-title">Génération 1977</h1>
@@ -323,17 +327,22 @@ if (target && GENERATIONS[gen][target]) {
     age === 0 ? "L'année de ta naissance" : "Tu avais " + age + (age > 1 ? " ans" : " an");
   document.getElementById("spot-year").textContent = target;
   document.getElementById("spot-sub").textContent = "Les 10 chansons populaires de " + target;
-  const btns = document.getElementById("spot-btns");
-  ORDER.forEach(p => {
-    if (!links[p]) return;
-    const a = document.createElement("a");
-    a.href = links[p]; a.target = "_blank"; a.rel = "noopener"; a.dataset.p = p;
-    a.textContent = PLATFORM_NAMES[p];
-    a.setAttribute("aria-label", "Playlist " + target + " sur " + PLATFORM_NAMES[p]);
-    btns.appendChild(a);
-  });
+  /* Le sélecteur de plateforme habituel remonte dans l'encadré : un seul sélecteur sur la page. */
+  const slot = document.getElementById("spot-slot");
+  slot.appendChild(document.querySelector(".picker"));
+  slot.appendChild(document.querySelector(".hint"));
   document.getElementById("spot").classList.add("on");
+  updateSpot();
 }
+
+function updateSpot() {
+  if (!target || !GENERATIONS[gen][target]) return;
+  const link = document.getElementById("spot-link");
+  const url = GENERATIONS[gen][target][platform];
+  if (url) { link.href = url; link.setAttribute("aria-label", "Playlist " + target + " sur " + PLATFORM_NAMES[platform]); }
+  else { link.removeAttribute("href"); }
+}
+document.querySelectorAll(".toggle button").forEach(b => b.addEventListener("click", updateSpot));
 </script>
 </body>
 </html>
